@@ -7,5 +7,13 @@
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
+    <style name="Back" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="AppTheme" parent="Back">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+    </style>
+
 
 </resources>

@@ -22,22 +22,8 @@ import java.util.HashSet;
 
 
 public class MainActivity extends AppCompatActivity {
-
     static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
-
-//    public void CheckForNotes() {
-//        View outOfNotes = findViewById(R.id.outOfNotes);
-//        if (notes.size() != 0) {
-//            outOfNotes.setVisibility(View.INVISIBLE);
-//        } else {
-//            outOfNotes.setVisibility(View.VISIBLE);
-//        }
-//    }
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,13 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if (item.getItemId() == R.id.add_note) {
-
-            // Going from MainActivity to NotesEditorActivity
             Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
             startActivity(intent);
             return true;
         }
-
         return false;
     }
 
@@ -76,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             notes = new ArrayList(set);
         }
 
-        // Using custom listView Provided by Android Studio
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
 
         listView.setAdapter(arrayAdapter);
@@ -84,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Going from MainActivity to NotesEditorActivity
                 Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
                 intent.putExtra("noteId", i);
                 startActivity(intent);
@@ -97,12 +78,12 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 final int itemToDelete = i;
-                // To delete the data from the App
+
                 new AlertDialog.Builder(MainActivity.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle("Удаление")
+                        .setMessage("Вы действительно хотите удалить заметку?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 notes.remove(itemToDelete);
@@ -113,12 +94,10 @@ public class MainActivity extends AppCompatActivity {
                                 sharedPreferences.edit().putStringSet("notes", set).apply();
 
                             }
-                        }).setNegativeButton("No", null).show();
+                        }).setNegativeButton("Нет", null).show();
 
                 return true;
             }
         });
     }
-
-
 }

@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class NoteEditorActivity extends AppCompatActivity {
@@ -28,11 +30,11 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.arrow_back && !changeFlag){
+        if (item.getItemId() == android.R.id.home && !changeFlag){
             startActivity(new Intent(NoteEditorActivity.this, MainActivity.class));
             return true;
         }
-        else if(item.getItemId() == R.id.arrow_back && changeFlag){
+        else if(item.getItemId() == android.R.id.home && changeFlag){
             changeFlag = false;
             MainActivity.notes.remove(MainActivity.notes.size()-1);
             finish();
@@ -54,18 +56,18 @@ public class NoteEditorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
-
         setSupportActionBar(findViewById(R.id.NoteMenu));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         EditText editText = findViewById(R.id.editText);
-
-        // Fetch data that is passed from MainActivity
+        EditText editTitle = findViewById(R.id.editTitle);
         Intent intent = getIntent();
 
-        // Accessing the data using key and value
         noteId = intent.getIntExtra("noteId", -1);
         if (noteId != -1) {
-            editText.setText(MainActivity.notes.get(noteId));
+            String[] kostyl= MainActivity.notes.get(noteId).split("\n");
+            editTitle.setText(kostyl[0].substring(7, kostyl[0].length()));
+            editText.setText(String.join("\n",Arrays.copyOfRange(kostyl,1,kostyl.length)));
         } else {
             MainActivity.notes.add("");
             noteId = MainActivity.notes.size() - 1;
@@ -75,26 +77,39 @@ public class NoteEditorActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // add your code here
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 changeFlag = true;
-                MainActivity.notes.set(noteId, String.valueOf(charSequence));
+                String title = String.valueOf(((EditText)findViewById(R.id.editTitle)).getText());
+                MainActivity.notes.set(noteId, "Name : " + title+"\n"+String.valueOf(charSequence));
                 MainActivity.arrayAdapter.notifyDataSetChanged();
-                // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 HashSet<String> set = new HashSet(MainActivity.notes);
                 sharedPreferences.edit().putStringSet("notes", set).apply();
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
-
-
         });
+        editTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                changeFlag = true;
+                String title = String.valueOf(((EditText)findViewById(R.id.editText)).getText());
+                MainActivity.notes.set(noteId, "Name : " + String.valueOf(charSequence)+"\n"+title);
+                MainActivity.arrayAdapter.notifyDataSetChanged();
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                HashSet<String> set = new HashSet(MainActivity.notes);
+                sharedPreferences.edit().putStringSet("notes", set).apply();
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
     }
 }
